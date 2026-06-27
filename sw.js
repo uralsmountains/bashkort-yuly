@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bashkort-yuly-v1';
+const CACHE_NAME = 'bashkort-yuly-v2';
 const urlsToCache = [
   './',
   './index.html',
