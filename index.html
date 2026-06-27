@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Башкорт Юлы | Интерактив</title>
+    <title>Башкорт Юлы | Платформа</title>
     <style>
-        :root {
-            --bg-color: #0b1310; --card-bg: #12201b; --border-color: #1b332b;
-            --text-main: #e2e8f0; --accent-green: #10b981; --accent-gold: #f59e0b; --error-red: #ef4444;
-        }
+        :root { --bg-color: #0b1310; --card-bg: #12201b; --border-color: #1b332b; --text-main: #e2e8f0; --accent-green: #10b981; --accent-gold: #f59e0b; --error-red: #ef4444; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         header { background: var(--card-bg); padding: 15px 20px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 1.2rem; font-weight: bold; color: #fff; z-index: 10; }
         header span { color: var(--accent-green); }
@@ -16,139 +13,149 @@
         .screen { display: none; animation: fadeIn 0.2s ease; }
         .screen.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Уроки */
+        .rating-panel { background: linear-gradient(135deg, #132720, #1b332b); padding: 15px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .rating-title { font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .rating-val { font-size: 1.2rem; font-weight: bold; color: #fff; margin-top: 4px; }
         .lesson-card { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 15px; transition: 0.3s; }
-        .lesson-card.locked { opacity: 0.4; filter: blur(2px); pointer-events: none; position: relative; }
+        .lesson-card.locked { opacity: 0.35; filter: blur(2px); pointer-events: none; position: relative; }
         .lesson-card h2 { margin-top: 0; color: var(--accent-gold); font-size: 1.1rem; margin-bottom: 10px; }
         .lesson-card p { font-size: 0.95rem; margin-bottom: 12px; line-height: 1.4; }
-        
-        /* Кнопки теста */
-        .quiz-option { background: rgba(255, 255, 255, 0.05); padding: 12px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.95rem; }
+        .quiz-option { background: rgba(255, 255, 255, 0.05); padding: 13px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.95rem; transition: 0.2s; }
         .quiz-option.correct { background: var(--accent-green) !important; color: #fff; pointer-events: none; border-color: var(--accent-green); }
         .quiz-option.wrong { background: var(--error-red) !important; color: #fff; border-color: var(--error-red); }
-        
-        /* Ввод текста (новые уровни) */
-        .level-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--accent-gold); background: rgba(0,0,0,0.2); color: white; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
-        .level-btn { background: var(--accent-green); color: white; padding: 12px; border: none; border-radius: 12px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-        .level-hint { font-size: 0.8rem; color: #94a3b8; margin-bottom: 10px; display: block; }
-
-        /* Словарь и Чат */
+        .level-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: white; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
+        .level-btn { background: var(--accent-green); color: white; padding: 12px; border: none; border-radius: 12px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .level-hint { display: none; background: rgba(245, 158, 11, 0.12); border: 1px dashed var(--accent-gold); color: var(--accent-gold); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; line-height: 1.4; }
         .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: white; font-size: 1rem; box-sizing: border-box; margin-bottom: 15px; position: sticky; top: 0; }
         .word-item { background: var(--card-bg); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .word-bash { color: var(--accent-green); font-weight: bold; }
-        
+        .alpha-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; margin-bottom: 25px; }
+        .alpha-letter { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px 0; text-align: center; border-radius: 10px; font-size: 1.2rem; font-weight: bold; color: #fff; }
+        .alpha-desc { font-size: 0.7rem; color: var(--accent-gold); display: block; margin-top: 4px; font-weight: normal; }
         .chat-container { display: flex; flex-direction: column; height: calc(100vh - 170px); }
         .chat-box { flex-grow: 1; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
         .message { padding: 12px 16px; border-radius: 14px; max-width: 85%; line-height: 1.4; font-size: 0.95rem; }
-        .msg-bot { background: rgba(16, 185, 129, 0.15); align-self: flex-start; border-left: 3px solid var(--accent-green); }
-        .msg-user { background: rgba(245, 158, 11, 0.15); align-self: flex-end; border-right: 3px solid var(--accent-gold); }
+        .msg-bot { background: rgba(16, 185, 129, 0.12); align-self: flex-start; border-left: 3px solid var(--accent-green); }
+        .msg-user { background: rgba(245, 158, 11, 0.12); align-self: flex-end; border-right: 3px solid var(--accent-gold); }
         .chat-input { display: flex; gap: 8px; }
         .chat-input input { flex-grow: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: white; }
         .chat-input button { background: var(--accent-green); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; }
-
-        /* Навигация */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 10px 0 20px; border-top: 1px solid var(--border-color); z-index: 100; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 10px 0 22px; border-top: 1px solid var(--border-color); z-index: 100; }
         .nav-item { color: #64748b; text-align: center; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
         .nav-item.active { color: var(--accent-green); font-weight: bold; }
         .nav-icon { font-size: 1.2rem; }
     </style>
 </head>
-<body>
-
+<body>   
     <header id="header-title">Башкорт <span>Юлы</span></header>
-
     <div class="app-content">
-        <!-- УРОКИ -->
         <div id="screen-lessons" class="screen active">
+            <div class="rating-panel">
+                <div><div class="rating-title">Ваш статус</div><div class="rating-val" id="user-rank">Новичок (Өйрәнеүсе)</div></div>
+                <div style="text-align: right;"><div class="rating-title">Очки опыта</div><div class="rating-val" id="user-score">0 XP</div></div>
+            </div>
             <div id="lessons-container"></div>
         </div>
-
-        <!-- СЛОВАРЬ -->
         <div id="screen-dict" class="screen">
-            <input type="text" id="dict-search" class="search-bar" placeholder="Поиск по базе данных..." oninput="filterDictionary()">
-            <div id="words-list">Загрузка базы...</div>
+            <input type="text" id="dict-search" class="search-bar" placeholder="Поиск слова в базе данных..." oninput="filterDictionary()">
+            <div id="words-list">Синхронизация с базой слов...</div>
         </div>
-
-        <!-- ИИ-ЧАТ -->
+        <div id="screen-alphabet" class="screen">
+            <h2 style="color: var(--accent-gold); margin-top: 0; font-size: 1.2rem;">9 особых букв башкирского языка</h2>
+            <div class="alpha-grid">
+                <div class="alpha-letter">Ә ә<span class="alpha-desc">мягкое А</span></div>
+                <div class="alpha-letter">Ө ө<span class="alpha-desc">мягкое О</span></div>
+                <div class="alpha-letter">Ү ү<span class="alpha-desc">мягкое У</span></div>
+                <div class="alpha-letter">Ғ ғ<span class="alpha-desc">задненёбное Г</span></div>
+                <div class="alpha-letter">Ҡ ҡ<span class="alpha-desc">глубокое К</span></div>
+                <div class="alpha-letter">Ң ң<span class="alpha-desc">носовое Н</span></div>
+                <div class="alpha-letter">Һ һ<span class="alpha-desc">английское H</span></div>
+                <div class="alpha-letter">Ҙ ҙ<span class="alpha-desc">английское TH (Z)</span></div>
+                <div class="alpha-letter">Ҫ ҫ<span class="alpha-desc">английское TH (S)</span></div>
+            </div>
+            <h2 style="color: var(--accent-gold); font-size: 1.2rem; margin-top: 20px;">Полный алфавит (42 буквы)</h2>
+            <p style="font-size: 0.95rem; line-height: 1.7; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
+                Аа Бб Вв Гг <b>Ғғ</b> Дд <b>Ҙҙ</b> Ее Ёё Жж Зз Ии Йй Кк <b>Ҡҡ</b> Лл Мм Нн <b>Ңң</b> Оо <b>Өө</b> Пп Рр Сс <b>Ҫҫ</b> Тт Уу <b>Үү</b> Фф Хх <b>Һһ</b> Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ <b>Әә</b> Юю Яя
+            </p>
+        </div>
         <div id="screen-ai" class="screen">
             <div class="chat-container">
                 <div class="chat-box" id="chat-box">
-                    <div class="message msg-bot">Һаумыһығыҙ! Я обновил свои знания. 🧠<br><br>Спроси меня про историю Башкортостана, про районы и деревни, или попроси перевести любое слово!</div>
+                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.<br><br>Спроси меня о Салавате Юлаеве, истории республики или напиши башкирское слово!</div>
                 </div>
                 <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Напиши вопрос или слово..." onkeydown="if(event.key==='Enter') sendMessage()">
+                    <input type="text" id="user-input" placeholder="Спроси про историю, города, людей..." onkeydown="if(event.key==='Enter') sendMessage()">
                     <button onclick="sendMessage()">➤</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- НАВИГАЦИЯ -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('lessons', this)"><span class="nav-icon">📚</span><span>Уроки</span></div>
         <div class="nav-item" onclick="switchTab('dict', this)"><span class="nav-icon">📖</span><span>Словарь</span></div>
-        <div class="nav-item" onclick="switchTab('ai', this)"><span class="nav-icon">🤖</span><span>Чат</span></div>
+        <div class="nav-item" onclick="switchTab('alphabet', this)"><span class="nav-icon">Аа</span><span>Алфавит</span></div>
+        <div class="nav-item" onclick="switchTab('ai', this)"><span class="nav-icon">🤖</span><span>ИИ-Чат</span></div>
     </div>
-
-    <script>
-        // ----------------- ЛОГИКА УРОКОВ -----------------
+        <script>
+        let xpScore = 0;
         const lessonsData = [
-            { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте»?", a1: "Һаумыһығыҙ", a2: "Рәхмәт", correct: 1 },
-            { type: 'input', q: "Урок 2: Практика", text: "Напиши перевод фразы: «Меня зовут Урал»", hint: "Подсказка: используй слова 'Минең исемем...'", correct: "Минең исемем Урал" },
-            { type: 'choice', q: "Урок 3: Город", text: "Как пишется «Уфа» на башкирском?", a1: "Өфө", a2: "Уфа", correct: 1 },
-            { type: 'input', q: "Урок 4: Чувства", text: "Переведи: «Я люблю Башкортостан»", hint: "Подсказка: Мин Башҡортостанды...", correct: "Мин Башҡортостанды яратам" },
-            { type: 'choice', q: "Урок 5: Семья", text: "Выберите перевод слова «Мама»:", a1: "Атай", a2: "Әсәй", correct: 2 },
-            { type: 'input', q: "Урок 6: Блиц-перевод", text: "Напиши слово «Спасибо» на башкирском", hint: "Без опечаток!", correct: "Рәхмәт" },
-            { type: 'choice', q: "Урок 7: Цвета", text: "Как сказать «Красный»?", a1: "Күк", a2: "Ҡыҙыл", correct: 2 },
-            { type: 'choice', q: "Урок 8: Природа", text: "Что означает слово «Урман»?", a1: "Лес", a2: "Озеро", correct: 1 },
-            { type: 'input', q: "Урок 9: Представление", text: "Переведи: «Я из Уфы»", hint: "Подсказка: Мин Өфөнән", correct: "Мин Өфөнән" },
-            { type: 'choice', q: "Урок 10: Животные", text: "Переведите слово «Собака»:", a1: "Ат", a2: "Эт", correct: 2 }
+            { type: 'choice', q: "Урок 1: Приветствие", text: "Как сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Ответ: Һаумыһығыҙ. Слово 'Сәләм' только для друзей." },
+            { type: 'input', q: "Урок 2: Знакомство", text: "Переведи: «Меня зовут Урал»", correct: "Минең исемем Урал", hint: "Пиши так: 'Минең исемем Урал'." },
+            { type: 'choice', q: "Урок 3: Столица", text: "Как пишется название главного города?", a1: "Уфа", a2: "Өфө", correct: 2, hint: "На башкирском пишется: Өфө." },
+            { type: 'input', q: "Урок 4: Патриотизм", text: "Переведи: «Я люблю Башкортостан»", correct: "Мин Башҡортостанды яратам", hint: "Правильно: 'Мин Башҡортостанды яратам'." },
+            { type: 'choice', q: "Урок 5: Родители", text: "Какое из слов переводится как «Мама»?", a1: "Атай", a2: "Әсәй", correct: 2, hint: "Правильно: Әсәй (мама)." },
+            { type: 'input', q: "Урок 6: Вежливость", text: "Напиши слово «Спасибо» на башкирском", correct: "Рәхмәт", hint: "Слово начинается на Р: 'Рәхмәт'." },
+            { type: 'choice', q: "Урок 7: Природа", text: "Что означает слово «Урман»?", a1: "Лес", a2: "Степь", correct: 1, hint: "Урман — это лес." },
+            { type: 'choice', q: "Урок 8: Дом", text: "Как перевести слово «Өй»?", a1: "Дом", a2: "Город", correct: 1, hint: "Өй — это дом, жилище." },
+            { type: 'input', q: "Урок 9: Числа", text: "Как пишется цифра «Пять»?", correct: "Биш", hint: "Правильный вариант: 'Биш'." },
+            { type: 'choice', q: "Урок 10: Животные", text: "Какое животное называют «Ат»?", a1: "Верблюд", a2: "Лошадь", correct: 2, hint: "Ат — это конь, лошадь." },
+            { type: 'input', q: "Урок 11: Происхождение", text: "Переведи: «Я из Уфы»", correct: "Мин Өфөнән", hint: "Ответ: 'Мин Өфөнән'." },
+            { type: 'choice', q: "Урок 12: Родные", text: "Кто такой «Олатай»?", a1: "Дедушка", a2: "Дядя", correct: 1, hint: "Олатай — дедушка." },
+            { type: 'input', q: "Урок 13: Вода", text: "Напиши слово «Вода»", correct: "Һыу", hint: "Ответ: 'Һыу'." },
+            { type: 'choice', q: "Урок 14: Времена года", text: "Что значит «Йәй»?", a1: "Зима", a2: "Лето", correct: 2, hint: "Йәй — это лето." },
+            { type: 'input', q: "Урок 15: Торжество", text: "Как переводится «Праздник»?", correct: "Байрам", hint: "Правильно: 'Байрам'." }
         ];
 
         function renderLessons() {
             const container = document.getElementById('lessons-container');
             let html = '';
-            
             lessonsData.forEach((l, i) => {
-                const lockedClass = i === 0 ? '' : 'locked';
+                const isLocked = i !== 0;
                 if (l.type === 'choice') {
-                    html += `
-                        <div class="lesson-card ${lockedClass}" id="lesson-${i+1}">
-                            <h2>${l.q}</h2><p>${l.text}</p>
-                            <div class="quiz-option" onclick="checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div>
-                            <div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div>
-                        </div>`;
-                } else if (l.type === 'input') {
-                    html += `
-                        <div class="lesson-card ${lockedClass}" id="lesson-${i+1}">
-                            <h2>${l.q} ✍️</h2><p>${l.text}</p>
-                            <span class="level-hint">${l.hint}</span>
-                            <input type="text" id="input-${i+1}" class="level-input" placeholder="Введи ответ сюда...">
-                            <button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button>
-                        </div>`;
+                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q}</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div></div>`;
+                } else {
+                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q} ✍️</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><input type="text" id="input-${i+1}" class="level-input" placeholder="Введите перевод..."><button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button></div>`;
                 }
             });
             container.innerHTML = html;
         }
         renderLessons();
 
+        function updateRank() {
+            let rank = "Новичок (Өйрәнеүсе)";
+            if (xpScore >= 40) rank = "Ученик (Шәкерт)";
+            if (xpScore >= 80) rank = "Знаток (Белгес)";
+            if (xpScore >= 120) rank = "Сказитель (Сәсән)";
+            if (xpScore >= 150) rank = "Батыр (Алпамыша) 🏆";
+            document.getElementById('user-rank').innerText = rank;
+            document.getElementById('user-score').innerText = xpScore + " XP";
+        }
+
         function unlockNext(num) {
+            xpScore += 10;
+            updateRank();
             const next = document.getElementById('lesson-' + (num + 1));
-            if (next) {
-                setTimeout(() => {
-                    next.classList.remove('locked');
-                    next.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 500);
-            }
+            if (next) { setTimeout(() => { next.classList.remove('locked'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 400); }
         }
 
         function checkChoice(btn, isCorrect, num) {
             if (isCorrect) {
                 btn.classList.add('correct');
+                document.getElementById('hint-' + num).style.display = 'none';
                 unlockNext(num);
             } else {
                 btn.classList.add('wrong');
+                document.getElementById('hint-' + num).style.display = 'block';
                 setTimeout(() => btn.classList.remove('wrong'), 800);
             }
         }
@@ -157,35 +164,34 @@
             const inputVal = document.getElementById(`input-${num}`).value.trim().toLowerCase().replace(/[.,!]/g, '');
             const targetVal = correctAns.toLowerCase().replace(/[.,!]/g, '');
             const btn = document.getElementById(`btn-${num}`);
-            
+            const hint = document.getElementById('hint-' + num);
             if (inputVal === targetVal) {
-                btn.innerText = "Правильно! 🎉";
+                btn.innerText = "Правильно! +10 XP";
                 btn.style.background = "var(--accent-green)";
+                hint.style.display = 'none';
                 unlockNext(num);
             } else {
-                btn.innerText = "Ошибка, попробуй еще!";
+                btn.innerText = "Попробовать снова";
                 btn.style.background = "var(--error-red)";
+                hint.style.display = 'block';
                 setTimeout(() => { btn.innerText = "Проверить"; btn.style.background = "var(--accent-green)"; }, 1500);
             }
         }
 
-        // ----------------- СЛОВАРЬ И JSON -----------------
         let dictionaryData = [];
         async function loadDictionary() {
             try {
                 const response = await fetch('dictionary.json?' + new Date().getTime());
                 dictionaryData = await response.json();
                 displayWords(dictionaryData);
-            } catch (e) { document.getElementById('words-list').innerText = 'Ошибка загрузки базы.'; }
+            } catch (e) { document.getElementById('words-list').innerText = 'Ошибка загрузки dictionary.json'; }
         }
         window.onload = loadDictionary;
 
         function displayWords(words) {
             const list = document.getElementById('words-list');
-            list.innerHTML = words.length ? '' : 'Слово не найдено';
-            words.forEach(w => {
-                list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`;
-            });
+            list.innerHTML = words.length ? '' : 'Ничего не найдено';
+            words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; });
         }
         function filterDictionary() {
             const query = document.getElementById('dict-search').value.toLowerCase().trim();
@@ -198,7 +204,6 @@
             element.classList.add('active');
         }
 
-        // ----------------- УМНЫЙ ИИ-ЧАТ -----------------
         function sendMessage() {
             const input = document.getElementById('user-input');
             const msg = input.value.trim();
@@ -210,28 +215,32 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             setTimeout(() => {
-                let reply = "";
+                let reply = "Прекрасный вопрос! Спроси меня точнее про города (Уфа, Стерлитамак, Сибай), великих людей (Салават Юлаев, Мустай Карим) или историю республики.";
                 const cleanMsg = msg.toLowerCase();
-                
-                // 1. Проверка на знания ИСТОРИИ
+
                 if (cleanMsg.includes('истори')) {
-                    reply = "📜 **История Башкортостана велика!**<br>В 1557 году башкирские племена добровольно вошли в состав России. В 1919 году была образована Башкирская АССР — первая национальная автономия в стране. А наши батыры, такие как Салават Юлаев, навсегда остались в легендах. Эпосы вроде «Урал-батыра» хранят древнейшие мифы Евразии.";
-                }
-                // 2. Проверка на знания ГЕОГРАФИИ (Районы и деревни)
-                else if (cleanMsg.includes('район') || cleanMsg.includes('деревн') || cleanMsg.includes('ауыл')) {
-                    reply = "🗺️ В Башкортостане целых **54 района** и тысячи деревень!<br><br>Например, живописный **Абзелиловский район** славится своими озерами и такими потрясающими местами, как Старобалапаново или райцентр Аскарово. А Бурзянский район известен диким бортевым медом и пещерой Шульган-Таш. Про какой район рассказать подробнее?";
-                }
-                // 3. Стандартный поиск слов по словарю
-                else {
+                    reply = "📜 **Краткая история:**<br>В 1557 году башкирские племена добровольно вошли в состав Российского государства. А 20 марта 1919 года было подписано Соглашение о создании Башкирской АССР — первой национальной автономии.";
+                } else if (cleanMsg.includes('салават юлаев') || cleanMsg.includes('салават')) {
+                    reply = "⚔️ **Салават Юлаев (1754–1800):**<br>Национальный герой, воин-батыр и великий поэт-сэсэн. Самая большая конная статуя в Европе в Уфе посвящена именно ему.";
+                } else if (cleanMsg.includes('мустай карим') || cleanMsg.includes('карим')) {
+                    reply = "✍️ **Мустай Карим (1919–2005):**<br>Классик башкирской литературы, народный поэт Башкортостана. Его повесть «Радость нашего дома» переведена на десятки языков.";
+                } else if (cleanMsg.includes('нуреев') || cleanMsg.includes('рудольф')) {
+                    reply = "🩰 **Рудольф Нуреев (1938–1993):**<br>Легендарный артист балета XX века. Свои первые шаги сделал на сцене театра оперы и балета в Уфе.";
+                } else if (cleanMsg.includes('уфа') || cleanMsg.includes('өфө')) {
+                    reply = "🏙️ **Өфө (Уфа):**<br>Столица республики, основанная в 1574 году. Это один из самых зеленых мегаполисов России.";
+                } else if (cleanMsg.includes('стерлитамак')) {
+                    reply = "🏭 **Стерлитамак:**<br>Второй по величине город, бывший первой столицей Башкирской АССР. Сегодня это крупный центр химии.";
+                } else if (cleanMsg.includes('сибай')) {
+                    reply = "⛏️ **Сибай:**<br>Столица Зауралья. Здесь расположен один из самых глубоких медно-колчеданных карьеров в мире.";
+                } else if (cleanMsg.includes('как дела') || cleanMsg.includes('хәлдәр')) {
+                    reply = "Рәхмәт, барыһы ла яҡшы! Готов проверять твои знания. Как успехи?";
+                } else {
                     let cleanWord = cleanMsg.replace(/(что значит слово|как переводится|перевод|что такое)\s+/gi, '').replace(/[?.,!]/g, '').trim();
                     const foundWord = dictionaryData.find(w => w.r.toLowerCase() === cleanWord || w.b.toLowerCase() === cleanWord);
-                    
                     if (foundWord) {
-                        reply = `✅ Перевод слова **${cleanWord}**:<br>🇷🇺 Рус: **${foundWord.r}**<br> Bash: **${foundWord.b}**`;
-                    } else if (cleanWord.includes('сабантуй')) {
-                        reply = "🌾 Сабантуй — великий праздник плуга. Скачки, куреш и много веселья!";
+                        reply = `✅ Перевод слова **${cleanWord}**:<br>🇷🇺 Рус: **${foundWord.r}**<br>🇧🇦 Bash: **${foundWord.b}**`;
                     } else {
-                        reply = `Хм, я пока не знаю слово "${cleanWord}", и в нашей базе данных его нет. Но я быстро учусь!`;
+                        reply = `Слова "${cleanWord}" пока нет в базе. Добавь его в dictionary.json! Или спроси меня про историю, города или Салавата Юлаева.`;
                     }
                 }
 
@@ -242,3 +251,5 @@
     </script>
 </body>
 </html>
+
+
