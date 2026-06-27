@@ -43,6 +43,7 @@
         .message { padding: 12px 16px; border-radius: 14px; max-width: 85%; line-height: 1.4; font-size: 0.95rem; }
         .msg-bot { background: rgba(16, 185, 129, 0.12); align-self: flex-start; border-left: 3px solid var(--accent-green); }
         .msg-user { background: rgba(245, 158, 11, 0.12); align-self: flex-end; border-right: 3px solid var(--accent-gold); }
+        .msg-game { background: rgba(99, 102, 241, 0.15); align-self: flex-start; border-left: 3px solid #6366f1; }
         .chat-input { display: flex; gap: 8px; }
         .chat-input input { flex-grow: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: white; }
         .chat-input button { background: var(--accent-green); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; }
@@ -50,6 +51,7 @@
         .nav-item { color: #64748b; text-align: center; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
         .nav-item.active { color: var(--accent-green); font-weight: bold; }
         .nav-icon { font-size: 1.2rem; }
+        .game-badge { display: inline-block; background: rgba(99,102,241,0.2); border: 1px solid #6366f1; color: #a5b4fc; padding: 2px 8px; border-radius: 8px; font-size: 0.75rem; margin-bottom: 6px; }
     </style>
 </head>
 <body>   
@@ -87,7 +89,7 @@
         <div id="screen-ai" class="screen">
             <div class="chat-container">
                 <div class="chat-box" id="chat-box">
-                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.</div>
+                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.<br><br>🎮 Хочешь сыграть в города? Напиши:<br>• <b>«давай сыграем в башкирские города»</b><br>• <b>«давай сыграем в русские города»</b></div>
                 </div>
                 <div class="chat-input">
                     <input type="text" id="user-input" placeholder="Спроси про историю, города, людей..." onkeydown="if(event.key==='Enter') sendMessage()">
@@ -104,6 +106,7 @@
     </div>
 
 <script>
+    // ===================== УРОК / XP =====================
     let xpScore = parseInt(localStorage.getItem('bashkort_xp')) || 0;
     const lessonsData = [
         { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Правильный ответ: Һаумыһығыҙ." },
@@ -125,7 +128,7 @@
 
     function renderLessons() {
         const container = document.getElementById('lessons-container');
-        if(!container) return;
+        if (!container) return;
         let html = '';
         let unlockedCount = Math.floor(xpScore / 10) + 1;
         lessonsData.forEach((l, i) => {
@@ -174,13 +177,200 @@
     renderLessons();
     updateRank();
 
-    async function loadDictionary() { try { const response = await fetch('dictionary.json?' + new Date().getTime()); dictionaryData = await response.json(); displayWords(dictionaryData); } catch (e) { document.getElementById('words-list').innerText = 'Ошибка'; } }
+    // ===================== СЛОВАРЬ =====================
+    async function loadDictionary() {
+        try {
+            const response = await fetch('dictionary.json?' + new Date().getTime());
+            dictionaryData = await response.json();
+            displayWords(dictionaryData);
+        } catch (e) {
+            document.getElementById('words-list').innerText = 'Ошибка';
+        }
+    }
     let dictionaryData = [];
     window.onload = loadDictionary;
-    function displayWords(words) { const list = document.getElementById('words-list'); list.innerHTML = ''; words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; }); }
-    function filterDictionary() { const query = document.getElementById('dict-search').value.toLowerCase().trim(); displayWords(dictionaryData.filter(w => w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query))); }
-    function switchTab(tabId, element) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + tabId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); element.classList.add('active'); }
 
+    function displayWords(words) {
+        const list = document.getElementById('words-list');
+        list.innerHTML = '';
+        words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; });
+    }
+    function filterDictionary() {
+        const query = document.getElementById('dict-search').value.toLowerCase().trim();
+        displayWords(dictionaryData.filter(w => w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query)));
+    }
+    function switchTab(tabId, element) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + tabId).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    // ===================== ИГРА В ГОРОДА =====================
+
+    // Башкирские города (на башкирском языке)
+    const bashkortCities = [
+        "өфө","стәрлетамаҡ","салауат","нефтекама","октябрьский","белорет","туймазы","ишембай","сибай","кумертау",
+        "мелеуз","баймаҡ","учалы","дюртюли","бирск","белебей","янаул","давлеканово","агидель","межгорье",
+        "аскино","чекмагуш","буздяк","кушнаренково","благовар","бижбуляк","ермекеево","зианчурино","зилаир","абзелил",
+        "архангельское","аургазы","балтачево","бураево","гафури","иглино","илишево","калтасы","кармаскалы","краснокамск",
+        "кугарчи","мечетлино","миякино","нуримано","салават","стерлибашево","стерлитамак","татышлы","уфимский","хайбуллино",
+        "чишмы","шаран","федоровка","мишкино","бакалы"
+    ];
+
+    // Русские города
+    const russianCities = [
+        "москва","санкт-петербург","новосибирск","екатеринбург","казань","нижний новгород","челябинск","омск",
+        "самара","ростов-на-дону","уфа","красноярск","воронеж","пермь","волгоград","краснодар","саратов",
+        "тюмень","тольятти","ижевск","барнаул","ульяновск","иркутск","хабаровск","ярославль","владивосток",
+        "махачкала","томск","оренбург","кемерово","новокузнецк","рязань","астрахань","набережные челны","пенза",
+        "липецк","тула","киров","чебоксары","калининград","брянск","курск","иваново","магнитогорск","тверь",
+        "ставрополь","белгород","нижний тагил","архангельск","владимир","сочи","чита","смоленск","калуга",
+        "сургут","орел","волжский","череповец","вологда","саранск","якутск","нижневартовск","стерлитамак",
+        "кострома","новороссийск","мурманск","улан-удэ","тамбов","петрозаводск","нальчик","балашиха","химки",
+        "подольск","курган","орск","комсомольск-на-амуре","абакан","псков","петропавловск-камчатский","братск",
+        "великий новгород","йошкар-ола","рыбинск","старый оскол","люберцы","мытищи","владикавказ","благовещенск",
+        "грозный","симферополь","севастополь","зеленоград","королев","одинцово","серпухов","электросталь","армавир"
+    ];
+
+    // Состояние игры
+    let gameState = {
+        active: false,
+        mode: null, // 'bashkort' | 'russian'
+        usedCities: [],
+        lastCity: null,
+        lastLetter: null,
+        score: 0
+    };
+
+    function normalizeCity(city) {
+        return city.trim().toLowerCase();
+    }
+
+    // Получить последнюю букву города (для башкирского — с учётом мягких букв)
+    function getLastLetter(city) {
+        const c = normalizeCity(city);
+        // Пропускаем мягкий знак и твёрдый знак на конце
+        let i = c.length - 1;
+        while (i >= 0 && (c[i] === 'ь' || c[i] === 'ъ')) i--;
+        return c[i] || c[c.length - 1];
+    }
+
+    // Найти город в базе, начинающийся на букву
+    function findBotCity(letter, cities, usedCities) {
+        // Перемешиваем для случайности
+        const shuffled = [...cities].sort(() => Math.random() - 0.5);
+        return shuffled.find(c => c.startsWith(letter) && !usedCities.includes(c)) || null;
+    }
+
+    function addGameMessage(text, type = 'game') {
+        const chatBox = document.getElementById('chat-box');
+        const cls = type === 'bot' ? 'msg-bot' : 'msg-game';
+        chatBox.innerHTML += `<div class="message ${cls}"><span class="game-badge">🏙 Города</span><br>${text}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function startGame(mode) {
+        const cities = mode === 'bashkort' ? bashkortCities : russianCities;
+        gameState = { active: true, mode, usedCities: [], lastCity: null, lastLetter: null, score: 0 };
+
+        // Бот называет первый город
+        const firstCity = cities[Math.floor(Math.random() * cities.length)];
+        gameState.usedCities.push(firstCity);
+        gameState.lastCity = firstCity;
+        gameState.lastLetter = getLastLetter(firstCity);
+
+        const modeName = mode === 'bashkort' ? 'башкирских городов' : 'русских городов';
+        const displayCity = mode === 'bashkort'
+            ? firstCity.charAt(0).toUpperCase() + firstCity.slice(1) + ' (башкирский город)'
+            : firstCity.charAt(0).toUpperCase() + firstCity.slice(1);
+
+        addGameMessage(
+            `🎮 Игра в города (${modeName}) началась!<br>` +
+            `Правила: называй город на букву, на которую закончился предыдущий.<br>` +
+            `Напиши <b>«стоп»</b> чтобы завершить игру.<br><br>` +
+            `Я начинаю: <b>${displayCity}</b><br>` +
+            `Твоя буква: <b>${gameState.lastLetter.toUpperCase()}</b>`
+        );
+    }
+
+    function stopGame(reason) {
+        const score = gameState.score;
+        gameState = { active: false, mode: null, usedCities: [], lastCity: null, lastLetter: null, score: 0 };
+        addGameMessage(
+            `🏁 Игра завершена! ${reason}<br>` +
+            `Ты назвал городов: <b>${score}</b>.<br>` +
+            `Напиши «давай сыграем в башкирские города» или «давай сыграем в русские города», чтобы сыграть снова.`
+        );
+    }
+
+    function handleGameInput(msg) {
+        const clean = normalizeCity(msg);
+
+        if (clean === 'стоп' || clean === 'стоп игру' || clean === 'конец' || clean === 'выход') {
+            stopGame('Ты остановил игру.');
+            return true;
+        }
+
+        const cities = gameState.mode === 'bashkort' ? bashkortCities : russianCities;
+        const modeName = gameState.mode === 'bashkort' ? 'башкирских' : 'русских';
+
+        // Проверяем, есть ли такой город в базе
+        if (!cities.includes(clean)) {
+            addGameMessage(`❌ «${msg}» нет в моей базе ${modeName} городов. Попробуй другой!`);
+            return true;
+        }
+
+        // Уже использован?
+        if (gameState.usedCities.includes(clean)) {
+            addGameMessage(`❌ Город «${msg}» уже был назван! Попробуй другой.`);
+            return true;
+        }
+
+        // Проверяем первую букву
+        const firstLetter = clean[0];
+        if (firstLetter !== gameState.lastLetter) {
+            addGameMessage(
+                `❌ Нужен город на букву <b>«${gameState.lastLetter.toUpperCase()}»</b>, а ты написал «${msg}».<br>Попробуй ещё раз!`
+            );
+            return true;
+        }
+
+        // Всё ок — принимаем ход игрока
+        gameState.usedCities.push(clean);
+        gameState.lastCity = clean;
+        gameState.score++;
+
+        const botLetter = getLastLetter(clean);
+        gameState.lastLetter = botLetter;
+
+        // Ход бота
+        const botCity = findBotCity(botLetter, cities, gameState.usedCities);
+
+        if (!botCity) {
+            // Бот не нашёл — игрок победил!
+            addGameMessage(`✅ Принято: <b>${msg}</b>!`);
+            stopGame('🏆 Я не нашёл города на букву «' + botLetter.toUpperCase() + '». Ты победил!');
+            return true;
+        }
+
+        gameState.usedCities.push(botCity);
+        gameState.lastCity = botCity;
+        gameState.lastLetter = getLastLetter(botCity);
+
+        const displayBot = botCity.charAt(0).toUpperCase() + botCity.slice(1);
+        const displayUser = msg.charAt(0).toUpperCase() + msg.slice(1);
+
+        addGameMessage(
+            `✅ Принято: <b>${displayUser}</b>!<br>` +
+            `Мой ответ: <b>${displayBot}</b><br>` +
+            `Твоя буква: <b>${gameState.lastLetter.toUpperCase()}</b>`
+        );
+
+        return true;
+    }
+
+    // ===================== ЧАТ =====================
     function sendMessage() {
         const input = document.getElementById('user-input');
         const msg = input.value.trim();
@@ -189,14 +379,54 @@
         chatBox.innerHTML += `<div class="message msg-user">${msg}</div>`;
         input.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        const cleanMsg = msg.toLowerCase().trim();
+
+        // --- Запуск игры ---
+        if (
+            cleanMsg.includes('башкирские города') ||
+            cleanMsg.includes('башкортские города') ||
+            cleanMsg.includes('башкирских город') ||
+            (cleanMsg.includes('сыграем') && cleanMsg.includes('башк'))
+        ) {
+            if (gameState.active) {
+                stopGame('Начинаем новую игру!');
+            }
+            setTimeout(() => startGame('bashkort'), 300);
+            return;
+        }
+
+        if (
+            cleanMsg.includes('русские города') ||
+            cleanMsg.includes('русских город') ||
+            cleanMsg.includes('российские города') ||
+            (cleanMsg.includes('сыграем') && (cleanMsg.includes('рус') || cleanMsg.includes('город')))
+        ) {
+            if (gameState.active) {
+                stopGame('Начинаем новую игру!');
+            }
+            setTimeout(() => startGame('russian'), 300);
+            return;
+        }
+
+        // --- Обработка хода в игре ---
+        if (gameState.active) {
+            handleGameInput(msg);
+            return;
+        }
+
+        // --- Обычный чат ---
         setTimeout(() => {
-            let reply = "Спроси меня про историю, города или переведи слово!";
-            const cleanMsg = msg.toLowerCase().trim();
-            if (cleanMsg.includes('уфа')) reply = "Уфа — столица Башкортостана!";
-            else if (cleanMsg.includes('салават')) reply = "Салават Юлаев — великий башкирский батыр.";
-            else {
+            let reply = "Спроси меня про историю, города или переведи слово! Или напиши «давай сыграем в башкирские города» 🎮";
+            if (cleanMsg.includes('уфа') || cleanMsg.includes('өфө')) {
+                reply = "Уфа (Өфө) — столица Башкортостана! Основана в 1574 году на берегу реки Агидель (Белой).";
+            } else if (cleanMsg.includes('салауат') || cleanMsg.includes('салават')) {
+                reply = "Салауат Юлаев — великий башкирский батыр, поэт и национальный герой. Соратник Пугачёва.";
+            } else if (cleanMsg.includes('игра') || cleanMsg.includes('играть')) {
+                reply = "🎮 Напиши:<br>• «давай сыграем в башкирские города»<br>• «давай сыграем в русские города»";
+            } else {
                 const foundWord = dictionaryData.find(w => w.r.toLowerCase() === cleanMsg || w.b.toLowerCase() === cleanMsg);
-                if (foundWord) reply = `Перевод: ${foundWord.b} — ${foundWord.r}`;
+                if (foundWord) reply = `Перевод: <b>${foundWord.b}</b> — ${foundWord.r}`;
             }
             chatBox.innerHTML += `<div class="message msg-bot">${reply}</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
