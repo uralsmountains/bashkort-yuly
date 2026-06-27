@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>    <!-- Настройки для PWA и Айфона -->
+    <title>Башкорт Юлы | Платформа</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#12201b">
-    ⁠⁠<link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Башкорт Юлы">
-Башкорт Юлы | Платформа</title>
     <style>
         :root { --bg-color: #0b1310; --card-bg: #12201b; --border-color: #1b332b; --text-main: #e2e8f0; --accent-green: #10b981; --accent-gold: #f59e0b; --error-red: #ef4444; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -88,7 +87,7 @@
         <div id="screen-ai" class="screen">
             <div class="chat-container">
                 <div class="chat-box" id="chat-box">
-                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.<br><br>Спроси меня о Салавате Юлаеве, истории республики или напиши башкирское слово!</div>
+                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.</div>
                 </div>
                 <div class="chat-input">
                     <input type="text" id="user-input" placeholder="Спроси про историю, города, людей..." onkeydown="if(event.key==='Enter') sendMessage()">
@@ -103,34 +102,32 @@
         <div class="nav-item" onclick="switchTab('alphabet', this)"><span class="nav-icon">Аа</span><span>Алфавит</span></div>
         <div class="nav-item" onclick="switchTab('ai', this)"><span class="nav-icon">🤖</span><span>ИИ-Чат</span></div>
     </div>
-            <script>
+
+    <script>
         let xpScore = parseInt(localStorage.getItem('bashkort_xp')) || 0;
-
-
         const lessonsData = [
-            { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Правильный ответ: Һаумыһығыҙ. Слово 'Сәләм' используется только среди близких друзей." },
-            { type: 'input', q: "Урок 2: Знакомство", text: "Переведи на башкирский фразу: «Меня зовут Урал»", correct: "Минең исемем Урал", hint: "Внимательно проверь буквы. Должно быть: 'Минең исемем Урал'." },
-            { type: 'choice', q: "Урок 3: Наша столица", text: "Как правильно пишется название главного города Башкортостана?", a1: "Уфа", a2: "Өфө", correct: 2, hint: "На башкирском языке название пишется через уникальные буквы: Өфө." },
-            { type: 'input', q: "Урок 4: Патриотизм", text: "Переведи выражение: «Я люблю Башкортостан»", correct: "Мин Башҡортостанды яратам", hint: "Используй глагол на конце предложения: 'Мин Башҡортостанды яратам'." },
-            { type: 'choice', q: "Урок 5: Почитание родителей", text: "Какое из этих слов переводится как «Мама»?", a1: "Атай", a2: "Әсәй", correct: 2, hint: "Правильно: Әсәй — мама, а Атай — папа." },
-            { type: 'input', q: "Урок 6: Вежливость", text: "Как написать слово «Спасибо» на башкирском языке?", correct: "Рәхмәт", hint: "Слово начинается со специфической буквы Р: 'Рәхмәт'." },
-            { type: 'choice', q: "Урок 7: Символика природы", text: "Что означает слово «Урман», воспеваемое в народных песнях?", a1: "Лес", a2: "Степь", correct: 1, hint: "Урман — это густой уральский лес." },
-            { type: 'choice', q: "Урок 8: Родной дом", text: "Как перевести слово «Өй»?", a1: "Дом", a2: "Город", correct: 1, hint: "Өй — это дом, жилище. А город переводится как 'Ҡала'." },
-            { type: 'input', q: "Урок 9: Числа", text: "Как пишется цифра «Пять» на башкирском?", correct: "Биш", hint: "Правильный вариант: 'Биш'." },
-            { type: 'choice', q: "Урок 10: Животный мир", text: "Какое животное называют верным спутником кочевника — «Ат»?", a1: "Верблюд", a2: "Лошадь", correct: 2, hint: "Ат — это конь, лошадь. Главное животное башкирской культуры." },
-            { type: 'input', q: "Урок 11: Происхождение", text: "Переведи на башкирский фразу: «Я из Уфы»", correct: "Мин Өфөнән", hint: "Правильный ответ: 'Мин Өфөнән'. Окончание -нән означает происхождение." },
-            { type: 'choice', q: "Урок 12: Родные люди", text: "Кто такой «Олатай»?", a1: "Дедушка", a2: "Дядя", correct: 1, hint: "Олатай — дедушка, а бабушка — это 'Өләсәй'." },
-            { type: 'input', q: "Урок 13: Вода", text: "Напиши башкирское слово, означающее «Вода»", correct: "Һыу", hint: "Используется буква 'Һ': 'Һыу'." },
-            { type: 'choice', q: "Урок 14: Времена года", text: "Какое время года называется словом «Йәй»?", a1: "Зима", a2: "Лето", correct: 2, hint: "Йәй — это прекрасное жаркое лето." },
-            { type: 'input', q: "Урок 15: Торжество", text: "Как переводится слово «Праздник»?", correct: "Байрам", hint: "Правильное написание: 'Байрам'." }
+            { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Правильный ответ: Һаумыһығыҙ." },
+            { type: 'input', q: "Урок 2: Знакомство", text: "Переведи: Меня зовут Урал", correct: "Минең исемем Урал", hint: "Должно быть: 'Минең исемем Урал'." },
+            { type: 'choice', q: "Урок 3: Наша столица", text: "Главный город Башкортостана?", a1: "Уфа", a2: "Өфө", correct: 2, hint: "Өфө." },
+            { type: 'input', q: "Урок 4: Патриотизм", text: "Переведи: Я люблю Башкортостан", correct: "Мин Башҡортостанды яратам", hint: "'Мин Башҡортостанды яратам'." },
+            { type: 'choice', q: "Урок 5: Почитание родителей", text: "Кто такая «Әсәй»?", a1: "Мама", a2: "Папа", correct: 1, hint: "Әсәй — мама." },
+            { type: 'input', q: "Урок 6: Вежливость", text: "Как написать слово «Спасибо»?", correct: "Рәхмәт", hint: "'Рәхмәт'." },
+            { type: 'choice', q: "Урок 7: Символика природы", text: "Что означает слово «Урман»?", a1: "Лес", a2: "Степь", correct: 1, hint: "Урман — лес." },
+            { type: 'choice', q: "Урок 8: Родной дом", text: "Как перевести слово «Өй»?", a1: "Дом", a2: "Город", correct: 1, hint: "Өй — дом." },
+            { type: 'input', q: "Урок 9: Числа", text: "Цифра «Пять»?", correct: "Биш", hint: "'Биш'." },
+            { type: 'choice', q: "Урок 10: Животный мир", text: "Что такое «Ат»?", a1: "Верблюд", a2: "Лошадь", correct: 2, hint: "Ат — лошадь." },
+            { type: 'input', q: "Урок 11: Происхождение", text: "Переведи: Я из Уфы", correct: "Мин Өфөнән", hint: "'Мин Өфөнән'." },
+            { type: 'choice', q: "Урок 12: Родные люди", text: "Кто такой «Олатай»?", a1: "Дедушка", a2: "Дядя", correct: 1, hint: "Олатай — дедушка." },
+            { type: 'input', q: "Урок 13: Вода", text: "Переведи «Вода»", correct: "Һыу", hint: "'Һыу'." },
+            { type: 'choice', q: "Урок 14: Времена года", text: "Что такое «Йәй»?", a1: "Зима", a2: "Лето", correct: 2, hint: "Йәй — лето." },
+            { type: 'input', q: "Урок 15: Торжество", text: "Переведи «Праздник»", correct: "Байрам", hint: "'Байрам'." }
         ];
 
-               function renderLessons() {
+        function renderLessons() {
             const container = document.getElementById('lessons-container');
+            if(!container) return;
             let html = '';
-            
             let unlockedCount = Math.floor(xpScore / 10) + 1;
-
             lessonsData.forEach((l, i) => {
                 const isLocked = i >= unlockedCount;
                 if (l.type === 'choice') {
@@ -150,7 +147,6 @@
             if (xpScore >= 150) rank = "Батыр (Алпамыша) 🏆";
             document.getElementById('user-rank').innerText = rank;
             document.getElementById('user-score').innerText = xpScore + " XP";
-            
             localStorage.setItem('bashkort_xp', xpScore);
         }
 
@@ -158,52 +154,12 @@
             xpScore += 10;
             updateRank();
             const next = document.getElementById('lesson-' + (num + 1));
-            if (next) { 
-                setTimeout(() => { 
-                    next.classList.remove('locked'); 
-                    next.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-                }, 400); 
-            }
-        }
-        
-        renderLessons();
-        updateRank();
- checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div></div>`;
-                } else {
-                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q} ✍️</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><input type="text" id="input-${i+1}" class="level-input" placeholder="Введите перевод..."><button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button></div>`;
-                }
-            });
-            container.innerHTML = html;
-        }
-        renderLessons();
-
-        function updateRank() {
-            let rank = "Новичок (Өйрәнеүсе)";
-            if (xpScore >= 40) rank = "Ученик (Шәкерт)";
-            if (xpScore >= 80) rank = "Знаток (Белгес)";
-            if (xpScore >= 120) rank = "Сказитель (Сәсән)";
-            if (xpScore >= 150) rank = "Батыр (Алпамыша) 🏆";
-            document.getElementById('user-rank').innerText = rank;
-            document.getElementById('user-score').innerText = xpScore + " XP";
-        }
-
-        function unlockNext(num) {
-            xpScore += 10;
-            updateRank();
-            const next = document.getElementById('lesson-' + (num + 1));
-            if (next) { setTimeout(() => { next.classList.remove('locked'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 400); }
+            if (next) { next.classList.remove('locked'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
         }
 
         function checkChoice(btn, isCorrect, num) {
-            if (isCorrect) {
-                btn.classList.add('correct');
-                document.getElementById('hint-' + num).style.display = 'none';
-                unlockNext(num);
-            } else {
-                btn.classList.add('wrong');
-                document.getElementById('hint-' + num).style.display = 'block';
-                setTimeout(() => btn.classList.remove('wrong'), 800);
-            }
+            if (isCorrect) { btn.classList.add('correct'); document.getElementById('hint-' + num).style.display = 'none'; unlockNext(num); }
+            else { btn.classList.add('wrong'); document.getElementById('hint-' + num).style.display = 'block'; setTimeout(() => btn.classList.remove('wrong'), 800); }
         }
 
         function checkInput(num, correctAns) {
@@ -211,119 +167,40 @@
             const targetVal = correctAns.toLowerCase().replace(/[.,!]/g, '');
             const btn = document.getElementById(`btn-${num}`);
             const hint = document.getElementById('hint-' + num);
-            if (inputVal === targetVal) {
-                btn.innerText = "Правильно! +10 XP";
-                btn.style.background = "var(--accent-green)";
-                hint.style.display = 'none';
-                unlockNext(num);
-            } else {
-                btn.innerText = "Попробовать снова";
-                btn.style.background = "var(--error-red)";
-                hint.style.display = 'block';
-                setTimeout(() => { btn.innerText = "Проверить"; btn.style.background = "var(--accent-green)"; }, 1500);
-            }
+            if (inputVal === targetVal) { btn.innerText = "Правильно! +10 XP"; btn.style.background = "var(--accent-green)"; hint.style.display = 'none'; unlockNext(num); }
+            else { btn.innerText = "Попробовать снова"; btn.style.background = "var(--error-red)"; hint.style.display = 'block'; setTimeout(() => { btn.innerText = "Проверить"; btn.style.background = "var(--accent-green)"; }, 1500); }
         }
 
+        renderLessons();
+        updateRank();
+
+        async function loadDictionary() { try { const response = await fetch('dictionary.json?' + new Date().getTime()); dictionaryData = await response.json(); displayWords(dictionaryData); } catch (e) { document.getElementById('words-list').innerText = 'Ошибка'; } }
         let dictionaryData = [];
-        async function loadDictionary() {
-            try {
-                const response = await fetch('dictionary.json?' + new Date().getTime());
-                dictionaryData = await response.json();
-                displayWords(dictionaryData);
-            } catch (e) { document.getElementById('words-list').innerText = 'Ошибка загрузки dictionary.json'; }
-        }
         window.onload = loadDictionary;
+        function displayWords(words) { const list = document.getElementById('words-list'); list.innerHTML = ''; words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; }); }
+        function filterDictionary() { const query = document.getElementById('dict-search').value.toLowerCase().trim(); displayWords(dictionaryData.filter(w => w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query))); }
+        function switchTab(tabId, element) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + tabId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); element.classList.add('active'); }
 
-        function displayWords(words) {
-            const list = document.getElementById('words-list');
-            list.innerHTML = words.length ? '' : 'Ничего не найдено';
-            words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; });
-        }
-        function filterDictionary() {
-            const query = document.getElementById('dict-search').value.toLowerCase().trim();
-            displayWords(dictionaryData.filter(w => w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query)));
-        }
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('screen-' + tabId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        // --- УМНЫЙ ЧАТ (ОБНОВЛЕННЫЙ) ---
         function sendMessage() {
             const input = document.getElementById('user-input');
             const msg = input.value.trim();
             if (!msg) return;
-
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML += `<div class="message msg-user">${msg}</div>`;
             input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
-
             setTimeout(() => {
-                let reply = "Прекрасный вопрос! Спроси меня точнее про города, великих людей, историю или башкирскую поэзию.";
+                let reply = "Спроси меня про историю, города или переведи слово!";
                 const cleanMsg = msg.toLowerCase().trim();
-
-                // 1. КОНТЕКСТ ДИАЛОГА (Реакция на "хорошо", "отлично")
-                if (cleanMsg === 'отлично' || cleanMsg === 'хорошо' || cleanMsg === 'супер' || cleanMsg === 'нормально') {
-                    reply = "Афарин! (Молодец!) Очень рад это слышать. Настроение — это главное. Продолжаем погружение в башкирский язык? 🚀";
-                } else if (cleanMsg === 'плохо' || cleanMsg === 'не очень' || cleanMsg === 'устал') {
-                    reply = "Ял ит (Отдохни)! Ничего страшного, знания никуда не убегут. Возвращайся, когда появятся силы! ☕";
-                }
-                
-                // 2. БАЗА ПОЭЗИИ (РАМИ ГАРИПОВ)
-                else if (cleanMsg.includes('туған тел') || cleanMsg.includes('туган тел') || cleanMsg.includes('рами гарипов') || cleanMsg.includes('ғарипов') || cleanMsg.includes('родной язык')) {
-                    reply = "📖 **Рәми Ғарипов — «Туған тел» (Родной язык)**<br><br>Рами Гарипов — народный поэт Башкортостана, посвятивший жизнь сохранению родного языка. Вот самое знаменитое четверостишие из его стихотворения:<br><br><i>Мин халҡымдың сәскә күңеленән<br>Бал ҡортондай ынйы йыямын,<br>Йыямын да — йәнле көйҙәр ҡушып,<br>Шиғырҙар итеп ҡоямын.</i><br><br><b>Перевод:</b><br><i>Я из цветущей души моего народа<br>Как пчела собираю жемчуг (нектар),<br>Собираю и, добавляя живые мелодии,<br>Отливаю их в стихи.</i>";
-                }
-
-                // 3. БАЗА ИСТОРИИ И ЛИЧНОСТЕЙ
-                else if (cleanMsg.includes('истори')) {
-                    reply = "📜 **Краткая история:**<br>В 1557 году башкирские племена добровольно вошли в состав Российского государства. А 20 марта 1919 года было подписано Соглашение о создании Башкирской АССР — первой национальной автономии.";
-                } else if (cleanMsg.includes('салават юлаев') || cleanMsg.includes('салават')) {
-                    reply = "⚔️ **Салават Юлаев (1754–1800):**<br>Национальный герой, воин-батыр и великий поэт-сэсэн. Самая большая конная статуя в Европе в Уфе посвящена именно ему.";
-                } else if (cleanMsg.includes('мустай карим') || cleanMsg.includes('карим')) {
-                    reply = "✍️ **Мустай Карим (1919–2005):**<br>Классик башкирской литературы, народный поэт Башкортостана. Его повесть «Радость нашего дома» переведена на десятки языков.";
-                } 
-
-                // 4. БАЗА ГОРОДОВ
-                else if (cleanMsg.includes('уфа') || cleanMsg.includes('өфө')) {
-                    reply = "🏙️ **Өфө (Уфа):**<br>Столица республики, основанная в 1574 году. Это один из самых зеленых мегаполисов России.";
-                } else if (cleanMsg.includes('сибай')) {
-                    reply = "⛏️ **Сибай:**<br>Столица Зауралья. Здесь расположен один из самых глубоких медно-колчеданных карьеров в мире.";
-                } 
-                
-                // 5. БАЗОВЫЕ ВОПРОСЫ
-                else if (cleanMsg.includes('как дела') || cleanMsg.includes('хәлдәр')) {
-                    reply = "Рәхмәт, барыһы ла яҡшы! (Спасибо, всё отлично!) Готов проверять твои знания. А у тебя как успехи?";
-                } 
-                
-                // 6. СКАНИРОВАНИЕ СЛОВАРЯ (Если это просто слово)
+                if (cleanMsg.includes('уфа')) reply = "Уфа — столица Башкортостана!";
+                else if (cleanMsg.includes('салават')) reply = "Салават Юлаев — великий башкирский батыр.";
                 else {
-                    // Очищаем слово от лишнего текста перед поиском
-                    let cleanWord = cleanMsg.replace(/(что значит слово|как переводится|перевод|что такое)\s+/gi, '').replace(/[?.,!]/g, '').trim();
-                    
-                    const foundWord = dictionaryData.find(w => w.r.toLowerCase() === cleanWord || w.b.toLowerCase() === cleanWord);
-                    if (foundWord) {
-                        reply = `✅ Перевод слова **${cleanWord}**:<br>🇷🇺 Рус: **${foundWord.r}**<br>🇧🇦 Bash: **${foundWord.b}**`;
-                    } else {
-                        reply = `Слова "${cleanWord}" пока нет в базе. Добавь его в dictionary.json! Или напиши "Туған тел", чтобы почитать стихи Рами Гарипова.`;
-                    }
+                    const foundWord = dictionaryData.find(w => w.r.toLowerCase() === cleanMsg || w.b.toLowerCase() === cleanMsg);
+                    if (foundWord) reply = `Перевод: ${foundWord.b} — ${foundWord.r}`;
                 }
-
                 chatBox.innerHTML += `<div class="message msg-bot">${reply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }, 600);
-        }
-    </script>
-    <!-- Запуск Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('PWA успешно запущено!', reg.scope))
-                    .catch(err => console.log('Ошибка PWA: ', err));
-            });
         }
     </script>
 </body>
