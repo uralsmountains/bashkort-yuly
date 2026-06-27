@@ -104,7 +104,8 @@
         <div class="nav-item" onclick="switchTab('ai', this)"><span class="nav-icon">🤖</span><span>ИИ-Чат</span></div>
     </div>
             <script>
-        let xpScore = 0;
+        let xpScore = parseInt(localStorage.getItem('bashkort_xp')) || 0;
+
 
         const lessonsData = [
             { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Правильный ответ: Һаумыһығыҙ. Слово 'Сәләм' используется только среди близких друзей." },
@@ -124,13 +125,50 @@
             { type: 'input', q: "Урок 15: Торжество", text: "Как переводится слово «Праздник»?", correct: "Байрам", hint: "Правильное написание: 'Байрам'." }
         ];
 
-        function renderLessons() {
+               function renderLessons() {
             const container = document.getElementById('lessons-container');
             let html = '';
+            
+            let unlockedCount = Math.floor(xpScore / 10) + 1;
+
             lessonsData.forEach((l, i) => {
-                const isLocked = i !== 0;
+                const isLocked = i >= unlockedCount;
                 if (l.type === 'choice') {
                     html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q}</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div></div>`;
+                } else {
+                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q} ✍️</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><input type="text" id="input-${i+1}" class="level-input" placeholder="Введите перевод..."><button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button></div>`;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        function updateRank() {
+            let rank = "Новичок (Өйрәнеүсе)";
+            if (xpScore >= 40) rank = "Ученик (Шәкерт)";
+            if (xpScore >= 80) rank = "Знаток (Белгес)";
+            if (xpScore >= 120) rank = "Сказитель (Сәсән)";
+            if (xpScore >= 150) rank = "Батыр (Алпамыша) 🏆";
+            document.getElementById('user-rank').innerText = rank;
+            document.getElementById('user-score').innerText = xpScore + " XP";
+            
+            localStorage.setItem('bashkort_xp', xpScore);
+        }
+
+        function unlockNext(num) {
+            xpScore += 10;
+            updateRank();
+            const next = document.getElementById('lesson-' + (num + 1));
+            if (next) { 
+                setTimeout(() => { 
+                    next.classList.remove('locked'); 
+                    next.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+                }, 400); 
+            }
+        }
+        
+        renderLessons();
+        updateRank();
+ checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div></div>`;
                 } else {
                     html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q} ✍️</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><input type="text" id="input-${i+1}" class="level-input" placeholder="Введите перевод..."><button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button></div>`;
                 }
