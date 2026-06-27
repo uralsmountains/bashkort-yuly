@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bashkort-yuly-v2';
+const CACHE_NAME = 'bashkort-yuly-v3'; // Поменяли версию на v3
 const urlsToCache = [
   './',
   './index.html',
@@ -7,23 +7,37 @@ const urlsToCache = [
   './icon.png'
 ];
 
-// Установка Service Worker и кэширование файлов
+// Установка и кэширование свежих файлов
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
         return cache.addAll(urlsToCache);
-      })
+      }).then(() => self.skipWaiting()) // Сразу активируем новый воркер
   );
 });
 
-// Перехват запросов (работа без интернета)
+// Очистка ВСЕХ старых кэшей (исправляет баг с вечным старым сайтом)
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cache => {
+          if (cache !== CACHE_NAME) {
+            console.log('Удаляем старый кэш:', cache);
+            return caches.delete(cache);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+// Стратегия: сначала запрашиваем свежий сайт из сети, если интернета нет — берем из кэша
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Если файл есть в кэше — отдаем его, иначе качаем из интернета
-        return response || fetch(event.request);
-      })
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
   );
 });
