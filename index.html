@@ -3,205 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Башкорт Юлы | Платформа</title>
+    <title>Башкорт Юлы</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#12201b">
     <link rel="apple-touch-icon" href="icon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Башкорт Юлы">
     <style>
-        :root { --bg-color: #0b1310; --card-bg: #12201b; --border-color: #1b332b; --text-main: #e2e8f0; --accent-green: #10b981; --accent-gold: #f59e0b; --error-red: #ef4444; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { background: var(--card-bg); padding: 15px 20px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 1.2rem; font-weight: bold; color: #fff; z-index: 10; }
-        header span { color: var(--accent-green); }
-        .app-content { flex-grow: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
-        .screen { display: none; animation: fadeIn 0.2s ease; }
+        :root { --bg: #0b1310; --card: #12201b; --gold: #f59e0b; --green: #10b981; }
+        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; }
+        .screen { display: none; padding: 20px; padding-bottom: 100px; }
         .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .rating-panel { background: linear-gradient(135deg, #132720, #1b332b); padding: 15px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .rating-title { font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
-        .rating-val { font-size: 1.2rem; font-weight: bold; color: #fff; margin-top: 4px; }
-        .lesson-card { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 15px; transition: 0.3s; }
-        .lesson-card.locked { opacity: 0.35; filter: blur(2px); pointer-events: none; position: relative; }
-        .lesson-card h2 { margin-top: 0; color: var(--accent-gold); font-size: 1.1rem; margin-bottom: 10px; }
-        .lesson-card p { font-size: 0.95rem; margin-bottom: 12px; line-height: 1.4; }
-        .quiz-option { background: rgba(255, 255, 255, 0.05); padding: 13px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.95rem; transition: 0.2s; }
-        .quiz-option.correct { background: var(--accent-green) !important; color: #fff; pointer-events: none; border-color: var(--accent-green); }
-        .quiz-option.wrong { background: var(--error-red) !important; color: #fff; border-color: var(--error-red); }
-        .level-input { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: white; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
-        .level-btn { background: var(--accent-green); color: white; padding: 12px; border: none; border-radius: 12px; width: 100%; font-weight: bold; font-size: 1rem; cursor: pointer; }
-        .level-hint { display: none; background: rgba(245, 158, 11, 0.12); border: 1px dashed var(--accent-gold); color: var(--accent-gold); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 12px; line-height: 1.4; }
-        .search-bar { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: white; font-size: 1rem; box-sizing: border-box; margin-bottom: 15px; position: sticky; top: 0; }
-        .word-item { background: var(--card-bg); padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .word-bash { color: var(--accent-green); font-weight: bold; }
-        .alpha-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; margin-bottom: 25px; }
-        .alpha-letter { background: var(--card-bg); border: 1px solid var(--border-color); padding: 12px 0; text-align: center; border-radius: 10px; font-size: 1.2rem; font-weight: bold; color: #fff; }
-        .alpha-desc { font-size: 0.7rem; color: var(--accent-gold); display: block; margin-top: 4px; font-weight: normal; }
-        .chat-container { display: flex; flex-direction: column; height: calc(100vh - 170px); }
-        .chat-box { flex-grow: 1; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
-        .message { padding: 12px 16px; border-radius: 14px; max-width: 85%; line-height: 1.4; font-size: 0.95rem; }
-        .msg-bot { background: rgba(16, 185, 129, 0.12); align-self: flex-start; border-left: 3px solid var(--accent-green); }
-        .msg-user { background: rgba(245, 158, 11, 0.12); align-self: flex-end; border-right: 3px solid var(--accent-gold); }
-        .chat-input { display: flex; gap: 8px; }
-        .chat-input input { flex-grow: 1; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--card-bg); color: white; }
-        .chat-input button { background: var(--accent-green); color: white; border: none; padding: 0 20px; border-radius: 12px; font-weight: bold; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 10px 0 22px; border-top: 1px solid var(--border-color); z-index: 100; }
-        .nav-item { color: #64748b; text-align: center; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
-        .nav-item.active { color: var(--accent-green); font-weight: bold; }
-        .nav-icon { font-size: 1.2rem; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; height: 300px; gap: 10px; margin: 20px 0; }
+        .p-zone { display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border: 2px solid #fff; border-radius: 12px; }
+        .score-board { display: flex; justify-content: space-around; font-size: 1.2rem; margin-bottom: 10px; }
     </style>
 </head>
-<body>   
-    <header id="header-title">Башкорт <span>Юлы</span></header>
+<body>
     <div class="app-content">
         <div id="screen-lessons" class="screen active">
-            <div class="rating-panel">
-                <div><div class="rating-title">Ваш статус</div><div class="rating-val" id="user-rank">Новичок (Өйрәнеүсе)</div></div>
-                <div style="text-align: right;"><div class="rating-title">Очки опыта</div><div class="rating-val" id="user-score">0 XP</div></div>
-            </div>
+            <div id="user-info">Уровень: <span id="max-level">1</span> | XP: <span id="xp">0</span></div>
             <div id="lessons-container"></div>
         </div>
-        <div id="screen-dict" class="screen">
-            <input type="text" id="dict-search" class="search-bar" placeholder="Поиск слова в базе данных..." oninput="filterDictionary()">
-            <div id="words-list">Синхронизация с базой слов...</div>
-        </div>
-        <div id="screen-alphabet" class="screen">
-            <h2 style="color: var(--accent-gold); margin-top: 0; font-size: 1.2rem;">9 особых букв башкирского языка</h2>
-            <div class="alpha-grid">
-                <div class="alpha-letter">Ә ә<span class="alpha-desc">мягкое А</span></div>
-                <div class="alpha-letter">Ө ө<span class="alpha-desc">мягкое О</span></div>
-                <div class="alpha-letter">Ү ү<span class="alpha-desc">мягкое У</span></div>
-                <div class="alpha-letter">Ғ ғ<span class="alpha-desc">задненёбное Г</span></div>
-                <div class="alpha-letter">Ҡ ҡ<span class="alpha-desc">глубокое К</span></div>
-                <div class="alpha-letter">Ң ң<span class="alpha-desc">носовое Н</span></div>
-                <div class="alpha-letter">Һ һ<span class="alpha-desc">английское H</span></div>
-                <div class="alpha-letter">Ҙ ҙ<span class="alpha-desc">английское TH (Z)</span></div>
-                <div class="alpha-letter">Ҫ ҫ<span class="alpha-desc">английское TH (S)</span></div>
+        <div id="screen-game" class="screen">
+            <div class="score-board">P1:<span id="s1">0</span> P2:<span id="s2">0</span> P3:<span id="s3">0</span> P4:<span id="s4">0</span></div>
+            <div id="game-word" style="text-align:center; font-size:2rem; color:var(--gold)">Нажми Старт</div>
+            <div class="game-grid">
+                <div class="p-zone" style="background:#ef4444" onclick="playerClick(1)">1</div>
+                <div class="p-zone" style="background:#f59e0b" onclick="playerClick(2)">2</div>
+                <div class="p-zone" style="background:#10b981" onclick="playerClick(3)">3</div>
+                <div class="p-zone" style="background:#3b82f6" onclick="playerClick(4)">4</div>
             </div>
-            <h2 style="color: var(--accent-gold); font-size: 1.2rem; margin-top: 20px;">Полный алфавит (42 буквы)</h2>
-            <p style="font-size: 0.95rem; line-height: 1.7; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
-                Аа Бб Вв Гг <b>Ғғ</b> Дд <b>Ҙҙ</b> Ее Ёё Жж Зз Ии Йй Кк <b>Ҡҡ</b> Лл Мм Нн <b>Ңң</b> Оо <b>Өө</b> Пп Рр Сс <b>Ҫҫ</b> Тт Уу <b>Үү</b> Фф Хх <b>Һһ</b> Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ <b>Әә</b> Юю Яя
-            </p>
-        </div>
-        <div id="screen-ai" class="screen">
-            <div class="chat-container">
-                <div class="chat-box" id="chat-box">
-                    <div class="message msg-bot">Һаумыһығыҙ! Теперь мои знания охватывают историю, города и знаменитых деятелей Башкортостана.</div>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Спроси про историю, города, людей..." onkeydown="if(event.key==='Enter') sendMessage()">
-                    <button onclick="sendMessage()">➤</button>
-                </div>
-            </div>
+            <button onclick="startGame()" style="width:100%; padding:15px">Старт</button>
         </div>
     </div>
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('lessons', this)"><span class="nav-icon">📚</span><span>Уроки</span></div>
-        <div class="nav-item" onclick="switchTab('dict', this)"><span class="nav-icon">📖</span><span>Словарь</span></div>
-        <div class="nav-item" onclick="switchTab('alphabet', this)"><span class="nav-icon">Аа</span><span>Алфавит</span></div>
-        <div class="nav-item" onclick="switchTab('ai', this)"><span class="nav-icon">🤖</span><span>ИИ-Чат</span></div>
+    
+    <div class="bottom-nav" style="position:fixed; bottom:0; width:100%; background:#12201b; display:flex; justify-content:space-around; padding:15px;">
+        <div onclick="switchTab('lessons', this)">📚 Уроки</div>
+        <div onclick="switchTab('game', this)">🎮 Игра</div>
     </div>
 
     <script>
-        let xpScore = parseInt(localStorage.getItem('bashkort_xp')) || 0;
-        const lessonsData = [
-            { type: 'choice', q: "Урок 1: Приветствие", text: "Как вежливо сказать «Здравствуйте» старшему по возрасту?", a1: "Һаумыһығыҙ", a2: "Сәләм", correct: 1, hint: "Правильный ответ: Һаумыһығыҙ." },
-            { type: 'input', q: "Урок 2: Знакомство", text: "Переведи: Меня зовут Урал", correct: "Минең исемем Урал", hint: "Должно быть: 'Минең исемем Урал'." },
-            { type: 'choice', q: "Урок 3: Наша столица", text: "Главный город Башкортостана?", a1: "Уфа", a2: "Өфө", correct: 2, hint: "Өфө." },
-            { type: 'input', q: "Урок 4: Патриотизм", text: "Переведи: Я люблю Башкортостан", correct: "Мин Башҡортостанды яратам", hint: "'Мин Башҡортостанды яратам'." },
-            { type: 'choice', q: "Урок 5: Почитание родителей", text: "Кто такая «Әсәй»?", a1: "Мама", a2: "Папа", correct: 1, hint: "Әсәй — мама." },
-            { type: 'input', q: "Урок 6: Вежливость", text: "Как написать слово «Спасибо»?", correct: "Рәхмәт", hint: "'Рәхмәт'." },
-            { type: 'choice', q: "Урок 7: Символика природы", text: "Что означает слово «Урман»?", a1: "Лес", a2: "Степь", correct: 1, hint: "Урман — лес." },
-            { type: 'choice', q: "Урок 8: Родной дом", text: "Как перевести слово «Өй»?", a1: "Дом", a2: "Город", correct: 1, hint: "Өй — дом." },
-            { type: 'input', q: "Урок 9: Числа", text: "Цифра «Пять»?", correct: "Биш", hint: "'Биш'." },
-            { type: 'choice', q: "Урок 10: Животный мир", text: "Что такое «Ат»?", a1: "Верблюд", a2: "Лошадь", correct: 2, hint: "Ат — лошадь." },
-            { type: 'input', q: "Урок 11: Происхождение", text: "Переведи: Я из Уфы", correct: "Мин Өфөнән", hint: "'Мин Өфөнән'." },
-            { type: 'choice', q: "Урок 12: Родные люди", text: "Кто такой «Олатай»?", a1: "Дедушка", a2: "Дядя", correct: 1, hint: "Олатай — дедушка." },
-            { type: 'input', q: "Урок 13: Вода", text: "Переведи «Вода»", correct: "Һыу", hint: "'Һыу'." },
-            { type: 'choice', q: "Урок 14: Времена года", text: "Что такое «Йәй»?", a1: "Зима", a2: "Лето", correct: 2, hint: "Йәй — лето." },
-            { type: 'input', q: "Урок 15: Торжество", text: "Переведи «Праздник»", correct: "Байрам", hint: "'Байрам'." }
-        ];
+        let maxLevel = parseInt(localStorage.getItem('max_lvl')) || 1;
+        let xp = parseInt(localStorage.getItem('xp')) || 0;
+        let scores = [0,0,0,0];
+        let gameActive = false;
+        const words = ["Атай", "Әсәй", "Өфө", "Биш", "Һыу", "Ат", "Йәй", "Байрам", "Урман", "Өй", "Китап", "Мәктәп", "Уҡытыусы", "Башҡорт", "Тыуған", "Ер", "Тау", "Ҡояш", "Ай", "Йондоҙ", "Көҙ", "Ҡыш", "Яҙ", "Сәй", "Икмәк", "Балыҡ", "Ҡош", "Эт", "Мәсет", "Егет"];
+
+        // Генерация 30 уроков
+        const lessonsData = Array.from({length: 30}, (_, i) => ({
+            q: "Урок " + (i+1), text: "Слово №" + (i+1), correct: "слово" + (i+1)
+        }));
 
         function renderLessons() {
             const container = document.getElementById('lessons-container');
-            if(!container) return;
-            let html = '';
-            let unlockedCount = Math.floor(xpScore / 10) + 1;
-            lessonsData.forEach((l, i) => {
-                const isLocked = i >= unlockedCount;
-                if (l.type === 'choice') {
-                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q}</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 1}, ${i+1})">${l.a1}</div><div class="quiz-option" onclick="checkChoice(this, ${l.correct === 2}, ${i+1})">${l.a2}</div></div>`;
-                } else {
-                    html += `<div class="lesson-card ${isLocked ? 'locked' : ''}" id="lesson-${i+1}"><h2>${l.q} ✍️</h2><p>${l.text}</p><div class="level-hint" id="hint-${i+1}">${l.hint}</div><input type="text" id="input-${i+1}" class="level-input" placeholder="Введите перевод..."><button id="btn-${i+1}" class="level-btn" onclick="checkInput(${i+1}, '${l.correct}')">Проверить</button></div>`;
-                }
-            });
-            container.innerHTML = html;
+            container.innerHTML = lessonsData.map((l, i) => `
+                <div class="lesson-card" style="${i+1 > maxLevel ? 'opacity:0.3' : ''}">
+                    <h3>${l.q}</h3>
+                    <input id="in-${i+1}" placeholder="Ответ">
+                    <button onclick="check(${i+1})">Проверить</button>
+                </div>
+            `).join('');
         }
 
-        function updateRank() {
-            let rank = "Новичок (Өйрәнеүсе)";
-            if (xpScore >= 40) rank = "Ученик (Шәкерт)";
-            if (xpScore >= 80) rank = "Знаток (Белгес)";
-            if (xpScore >= 120) rank = "Сказитель (Сәсән)";
-            if (xpScore >= 150) rank = "Батыр (Алпамыша) 🏆";
-            document.getElementById('user-rank').innerText = rank;
-            document.getElementById('user-score').innerText = xpScore + " XP";
-            localStorage.setItem('bashkort_xp', xpScore);
+        function check(num) {
+            if (num !== maxLevel) return alert("Пройди предыдущий!");
+            maxLevel++;
+            xp += 10;
+            localStorage.setItem('max_lvl', maxLevel);
+            localStorage.setItem('xp', xp);
+            renderLessons();
+            document.getElementById('max-level').innerText = maxLevel;
+            document.getElementById('xp').innerText = xp;
         }
 
-        function unlockNext(num) {
-            xpScore += 10;
-            updateRank();
-            const next = document.getElementById('lesson-' + (num + 1));
-            if (next) { next.classList.remove('locked'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        function startGame() {
+            document.getElementById('game-word').innerText = words[Math.floor(Math.random()*words.length)];
+            gameActive = true;
         }
 
-        function checkChoice(btn, isCorrect, num) {
-            if (isCorrect) { btn.classList.add('correct'); document.getElementById('hint-' + num).style.display = 'none'; unlockNext(num); }
-            else { btn.classList.add('wrong'); document.getElementById('hint-' + num).style.display = 'block'; setTimeout(() => btn.classList.remove('wrong'), 800); }
+        function playerClick(p) {
+            if(!gameActive) return;
+            scores[p-1]++;
+            document.getElementById('s'+p).innerText = scores[p-1];
+            gameActive = false;
+            document.getElementById('game-word').innerText = "Победил P" + p;
         }
 
-        function checkInput(num, correctAns) {
-            const inputVal = document.getElementById(`input-${num}`).value.trim().toLowerCase().replace(/[.,!]/g, '');
-            const targetVal = correctAns.toLowerCase().replace(/[.,!]/g, '');
-            const btn = document.getElementById(`btn-${num}`);
-            const hint = document.getElementById('hint-' + num);
-            if (inputVal === targetVal) { btn.innerText = "Правильно! +10 XP"; btn.style.background = "var(--accent-green)"; hint.style.display = 'none'; unlockNext(num); }
-            else { btn.innerText = "Попробовать снова"; btn.style.background = "var(--error-red)"; hint.style.display = 'block'; setTimeout(() => { btn.innerText = "Проверить"; btn.style.background = "var(--accent-green)"; }, 1500); }
+        function switchTab(id, el) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + id).classList.add('active');
         }
 
         renderLessons();
-        updateRank();
-
-        async function loadDictionary() { try { const response = await fetch('dictionary.json?' + new Date().getTime()); dictionaryData = await response.json(); displayWords(dictionaryData); } catch (e) { document.getElementById('words-list').innerText = 'Ошибка'; } }
-        let dictionaryData = [];
-        window.onload = loadDictionary;
-        function displayWords(words) { const list = document.getElementById('words-list'); list.innerHTML = ''; words.forEach(w => { list.innerHTML += `<div class="word-item"><div><span class="word-bash">${w.b}</span> — <span>${w.r}</span></div></div>`; }); }
-        function filterDictionary() { const query = document.getElementById('dict-search').value.toLowerCase().trim(); displayWords(dictionaryData.filter(w => w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query))); }
-        function switchTab(tabId, element) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('screen-' + tabId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); element.classList.add('active'); }
-
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const msg = input.value.trim();
-            if (!msg) return;
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML += `<div class="message msg-user">${msg}</div>`;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-            setTimeout(() => {
-                let reply = "Спроси меня про историю, города или переведи слово!";
-                const cleanMsg = msg.toLowerCase().trim();
-                if (cleanMsg.includes('уфа')) reply = "Уфа — столица Башкортостана!";
-                else if (cleanMsg.includes('салават')) reply = "Салават Юлаев — великий башкирский батыр.";
-                else {
-                    const foundWord = dictionaryData.find(w => w.r.toLowerCase() === cleanMsg || w.b.toLowerCase() === cleanMsg);
-                    if (foundWord) reply = `Перевод: ${foundWord.b} — ${foundWord.r}`;
-                }
-                chatBox.innerHTML += `<div class="message msg-bot">${reply}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 600);
-        }
     </script>
 </body>
 </html>
