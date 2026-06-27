@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Башкорт Юлы | Web App</title>
+    <title>Башкорт Юлы — Образовательная Платформа</title>
     <style>
         :root {
             --bg-color: #0b1310;
             --card-bg: #12201b;
             --border-color: #1b332b;
             --text-main: #e2e8f0;
+            --text-muted: #718096;
             --accent-green: #10b981;
             --accent-gold: #f59e0b;
             --error-red: #ef4444;
@@ -25,110 +26,129 @@
             height: 100vh;
             overflow: hidden;
         }
-        
-        /* Верхняя панель */
         header {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 15px 20px;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
             font-size: 1.2rem;
             font-weight: bold;
-            color: var(--accent-green);
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-
-        /* Контейнер для экранов */
+        header span { color: var(--accent-green); }
         .app-content {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 20px;
-            padding-bottom: 80px; /* Отступ для нижнего меню */
+            padding: 15px;
+            padding-bottom: 90px;
         }
-
-        /* Экраны (по умолчанию скрыты, кроме первого) */
         .screen {
             display: none;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.25s ease;
         }
-        .screen.active {
-            display: block;
-        }
+        .screen.active { display: block; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Стили для карточек уроков */
+        
+        /* Уроки и интерактив */
         .lesson-card {
             background: var(--card-bg);
             padding: 20px;
             border-radius: 16px;
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
-        .lesson-card h2 {
-            margin-top: 0;
+        .lesson-card.locked {
+            opacity: 0.4;
+            filter: blur(1px);
+            pointer-events: none;
+            position: relative;
+        }
+        .lesson-card.locked::before {
+            content: "🔒 Пройдите предыдущий урок";
+            position: absolute;
+            top: 15px; right: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
         }
-        
-        /* Стили для тестов */
+        .lesson-card h2 { margin-top: 0; color: var(--accent-gold); font-size: 1.3rem; }
         .quiz-option {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 14px;
+            margin: 8px 0;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            text-align: center;
+            text-align: left;
             cursor: pointer;
             transition: 0.2s;
         }
-        .quiz-option.correct {
-            background: var(--accent-green);
-            color: #fff;
+        .quiz-option.correct { background: var(--accent-green) !important; color: #fff; border-color: #fff; }
+        .quiz-option.wrong { background: var(--error-red) !important; color: #fff; border-color: #fff; }
+        
+        /* Поиск и словарь */
+        .search-container {
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            padding-bottom: 10px;
+            z-index: 10;
         }
-        .quiz-option.wrong {
-            background: var(--error-red);
-            color: #fff;
-        }
-
-        /* Стили для чата */
-        .chat-box {
+        .search-bar {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
             background: var(--card-bg);
-            height: 300px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .word-item {
+            background: var(--card-bg);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .word-bash { color: var(--accent-green); font-weight: bold; font-size: 1.1rem; }
+        .word-rus { color: #cbd5e1; }
+        .word-cat { font-size: 0.75rem; color: var(--accent-gold); background: rgba(245,158,11,0.1); padding: 2px 6px; border-radius: 4px; }
+
+        /* Культурный Чат */
+        .chat-container { display: flex; flex-direction: column; height: calc(100vh - 170px); }
+        .chat-box {
+            flex-grow: 1;
+            background: var(--card-bg);
             border-radius: 16px;
             border: 1px solid var(--border-color);
             padding: 15px;
             overflow-y: auto;
-            margin-bottom: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        .message {
-            padding: 10px 15px;
-            border-radius: 12px;
-            max-width: 80%;
-        }
-        .msg-bot {
-            background: rgba(16, 185, 129, 0.2);
-            align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
-        .msg-user {
-            background: rgba(245, 158, 11, 0.2);
-            align-self: flex-end;
-            border-bottom-right-radius: 2px;
-        }
-        .chat-input {
-            display: flex;
-            gap: 10px;
-        }
+        .message { padding: 12px 16px; border-radius: 14px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
+        .msg-bot { background: rgba(16, 185, 129, 0.15); align-self: flex-start; border-bottom-left-radius: 2px; border-left: 3px solid var(--accent-green); }
+        .msg-user { background: rgba(245, 158, 11, 0.15); align-self: flex-end; border-bottom-right-radius: 2px; border-right: 3px solid var(--accent-gold); }
+        .chat-input { display: flex; gap: 8px; }
         .chat-input input {
             flex-grow: 1;
-            padding: 15px;
+            padding: 14px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             color: white;
             font-size: 1rem;
         }
@@ -136,160 +156,240 @@
             background: var(--accent-green);
             color: white;
             border: none;
-            padding: 15px 20px;
+            padding: 0 20px;
             border-radius: 12px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        /* Нижняя навигация */
+        /* Навигация */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+            bottom: 0; left: 0; width: 100%;
             background: var(--card-bg);
             display: flex;
             justify-content: space-around;
-            padding: 15px 0;
+            padding: 12px 0 25px;
             border-top: 1px solid var(--border-color);
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
         }
-        .nav-item {
-            color: var(--text-muted);
-            text-align: center;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .nav-item.active {
-            color: var(--accent-green);
-            font-weight: bold;
-        }
+        .nav-item { color: #64748b; text-align: center; font-size: 0.85rem; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item.active { color: var(--accent-green); font-weight: bold; }
+        .nav-icon { font-size: 1.3rem; }
     </style>
 </head>
 <body>
 
-    <header id="header-title">Башкорт Юлы</header>
+    <header id="header-title">Башкорт <span>Юлы</span> — Уроки</header>
 
     <div class="app-content">
         
         <div id="screen-lessons" class="screen active">
-            <div class="lesson-card">
-                <h2>Урок 1: Приветствие</h2>
-                <p>Башкирский язык начинается с уважения. Давайте выучим базовые слова для начала общения.</p>
-                <div style="margin-top: 20px;">
-                    <h3>Как сказать "Спасибо"?</h3>
-                    <div class="quiz-option" onclick="checkAnswer(this, false)">Һаумыһығыҙ</div>
-                    <div class="quiz-option" onclick="checkAnswer(this, true)">Рәхмәт</div>
-                    <div class="quiz-option" onclick="checkAnswer(this, false)">Мин</div>
+            <div class="lesson-card" id="lesson-1">
+                <h2>Урок 1: Базовое приветствие</h2>
+                <p>Изучение любого языка начинается с приветствия. Как правильно и вежливо сказать «Здравствуйте»?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 1)">Һаумыһығыҙ (Здравствуйте)</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Рәхмәт (Спасибо)</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Һау бул (Пока)</div>
                 </div>
-                <p id="quiz-result" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
             </div>
             
-            <div class="lesson-card" style="opacity: 0.5;">
-                <h2>Урок 2: Семья (Закрыто)</h2>
-                <p>Пройдите первый урок, чтобы открыть эту тему.</p>
+            <div class="lesson-card locked" id="lesson-2">
+                <h2>Урок 2: Моя Семья (Әсәй һәм Атай)</h2>
+                <p>Семья — самое главное для каждого человека. Выберите верный перевод слова «Мама»:</p>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Атай</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 2)">Әсәй</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Ҡатла</div>
+                </div>
+            </div>
+
+            <div class="lesson-card locked" id="lesson-3">
+                <h2>Урок 3: Родной край и числа</h2>
+                <p>Уфа — столица нашей прекрасной республики. Как правильно пишется название города на башкирском?</p>
+                <div class="quiz-options">
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Уфа</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, true, 3)">Өфө</div>
+                    <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Казань</div>
+                </div>
             </div>
         </div>
 
         <div id="screen-dict" class="screen">
-            <div class="lesson-card">
-                <h2>Базовый словарь</h2>
-                <ul style="line-height: 2;">
-                    <li><strong>Һаумыһығыҙ</strong> — Здравствуйте</li>
-                    <li><strong>Рәхмәт</strong> — Спасибо</li>
-                    <li><strong>Атай</strong> — Отец</li>
-                    <li><strong>Әсәй</strong> — Мать</li>
-                    <li><strong>Өфө</strong> — Уфа</li>
-                </ul>
+            <div class="search-container">
+                <input type="text" id="dict-search" class="search-bar" placeholder="Поиск слова (на русском или башкирском)..." oninput="filterDictionary()">
             </div>
+            <div id="words-list">
+                </div>
         </div>
 
         <div id="screen-ai" class="screen">
-            <div class="chat-box" id="chat-box">
-                <div class="message msg-bot">Һаумыһығыҙ! Я твой цифровой помощник. Напиши мне слово на русском, и я подскажу перевод (в демо-версии я знаю слова: привет, спасибо, уфа).</div>
-            </div>
-            <div class="chat-input">
-                <input type="text" id="user-input" placeholder="Введите сообщение...">
-                <button onclick="sendMessage()">▶</button>
+            <div class="chat-container">
+                <div class="chat-box" id="chat-box">
+                    <div class="message msg-bot">Хаумыһығыҙ, Урал! Я твой гид по башкирской культуре. Спроси меня про национальные праздники, блюда, инструменты, эпосы или героев (например: Сабантуй, Курай, Салават Юлаев, Чак-чак, Урал-батыр).</div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Задай вопрос о культуре или языке..." onkeydown="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()">Отправить</button>
+                </div>
             </div>
         </div>
 
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('lessons', this)">📚 Уроки</div>
-        <div class="nav-item" onclick="switchTab('dict', this)">📖 Словарь</div>
-        <div class="nav-item" onclick="switchTab('ai', this)">🤖 ИИ Чат</div>
+        <div class="nav-item active" onclick="switchTab('lessons', this)">
+            <span class="nav-icon">📚</span><span>Уроки</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('dict', this)">
+            <span class="nav-icon">📖</span><span>Словарь</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('ai', this)">
+            <span class="nav-icon">🤖</span><span>Культура чат</span>
+        </div>
     </div>
 
     <script>
-        // Функция переключения вкладок
-        function switchTab(tabId, element) {
-            // Скрываем все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            // Показываем нужный
-            document.getElementById('screen-' + tabId).classList.add('active');
+        // БАЗА ДАННЫХ СЛОВАРЯ (Построена по категориям, легко дополняется)
+        const dictionaryData = [
+            // Приветствия и вежливость
+            {b: "Һаумыһығыҙ", r: "Здравствуйте", c: "Общение"},
+            {b: "Сәләм", r: "Привет", c: "Общение"},
+            {b: "Рәхмәт", r: "Спасибо", c: "Общение"},
+            {b: "Һау булығыҙ", r: "До свидания", c: "Общение"},
+            {b: "Иртәнге сәләм", r: "Доброе утро", c: "Общение"},
+            {b: "Хәйерле кис", r: "Добрый вечер", c: "Общение"},
+            {b: "Афарин", r: "Молодец / Браво", c: "Общение"},
+            {b: "Зинһар", r: "Пожалуйста (просьба)", c: "Общение"},
             
-            // Убираем активный класс у всех кнопок меню
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            // Делаем нажатую кнопку активной
-            element.classList.add('active');
+            // Семья
+            {b: "Әсәй", r: "Мама", c: "Семья"},
+            {b: "Атай", r: "Папа", c: "Семья"},
+            {b: "Өләсәй", r: "Бабушка", c: "Семья"},
+            {b: "Олатай", r: "Дедушка", c: "Семья"},
+            {b: "Аға", r: "Старший брат", c: "Семья"},
+            {b: "Һеңле", r: "Младшая сестра", c: "Семья"},
+            {b: "Бала", r: "Ребенок", c: "Семья"},
+            
+            // Культура и география
+            {b: "Өфө", r: "Уфа", c: "Родина"},
+            {b: "Башҡортостан", r: "Башкортостан", c: "Родина"},
+            {b: "Ҡурай", r: "Курай", c: "Культура"},
+            {b: "Урал", r: "Урал", c: "Родина"},
+            {b: "Юлы", r: "Путь / Дорога", c: "Общее"},
+            {b: "Байрам", r: "Праздник", c: "Культура"},
+            {b: "Ат", r: "Лошадь", c: "Природа"},
+            
+            // Еда
+            {b: "Икмәк", r: "Хлеб", c: "Еда"},
+            {b: "Сәй", r: "Чай", c: "Еда"},
+            {b: "Ҡымыҙ", r: "Кумыс", c: "Еда"},
+            {b: "Бал", r: "Мёд", c: "Еда"},
+            {b: "Ит", r: "Мясо", c: "Еда"},
+            {b: "Һөт", r: "Молоко", c: "Еда"},
+            
+            // Числа
+            {b: "Бер", r: "Один", c: "Числа"},
+            {b: "Ике", r: "Два", c: "Числа"},
+            {b: "Өс", r: "Три", c: "Числа"},
+            {b: "Дүрт", r: "Четыре", c: "Числа"},
+            {b: "Биш", r: "Пять", c: "Числа"}
+        ];
 
-            // Меняем заголовок
-            const titles = {
-                'lessons': 'Уроки',
-                'dict': 'Словарь',
-                'ai': 'ИИ Помощник'
-            };
-            document.getElementById('header-title').innerText = titles[tabId];
+        // Инициализация словаря при загрузке
+        function displayWords(words) {
+            const list = document.getElementById('words-list');
+            list.innerHTML = '';
+            words.forEach(w => {
+                list.innerHTML += `
+                    <div class="word-item">
+                        <div>
+                            <span class="word-bash">${w.b}</span> — 
+                            <span class="word-rus">${w.r}</span>
+                        </div>
+                        <span class="word-cat">${w.c}</span>
+                    </div>`;
+            });
+        }
+        displayWords(dictionaryData);
+
+        // Поиск по словарю
+        function filterDictionary() {
+            const query = document.getElementById('dict-search').value.toLowerCase().trim();
+            const filtered = dictionaryData.filter(w => 
+                w.b.toLowerCase().includes(query) || w.r.toLowerCase().includes(query)
+            );
+            displayWords(filtered);
         }
 
-        // Функция для интерактива в тесте
-        function checkAnswer(element, isCorrect) {
-            let resultText = document.getElementById('quiz-result');
-            if(isCorrect) {
-                element.classList.add('correct');
-                resultText.innerText = "Правильно! Молодец 🎉";
-                resultText.style.color = "var(--accent-green)";
+        // Переключение табов
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+            
+            const titles = { 'lessons': 'Башкорт Юлы — Уроки', 'dict': 'Интерактивный Словарь', 'ai': 'Гид по Башкирской Культуре' };
+            document.getElementById('header-title').innerHTML = titles[tabId];
+        }
+
+        // Логика проверки уроков и разблокировки прогресса
+        function checkAnswer(optionElement, isCorrect, lessonNumber) {
+            if (isCorrect) {
+                optionElement.classList.add('correct');
+                
+                // Разблокируем следующий урок
+                const nextLessonNum = lessonNumber + 1;
+                const nextLesson = document.getElementById('lesson-' + nextLessonNum);
+                if (nextLesson) {
+                    setTimeout(() => {
+                        nextLesson.classList.remove('locked');
+                        alert(`Отлично! Урок ${lessonNumber} пройден. Урок ${nextLessonNum} разблокирован! 🎉`);
+                    }, 400);
+                } else {
+                    setTimeout(() => alert("Поздравляем! Вы успешно прошли все доступные уроки! 🌟"), 400);
+                }
             } else {
-                element.classList.add('wrong');
-                resultText.innerText = "Не совсем, попробуй еще раз!";
-                resultText.style.color = "var(--error-red)";
-                setTimeout(() => element.classList.remove('wrong'), 1000); // Убираем красную подсветку через секунду
+                optionElement.classList.add('wrong');
+                setTimeout(() => optionElement.classList.remove('wrong'), 1000);
             }
         }
 
-        // Логика для имитации чата с ИИ
+        // КУЛЬТУРНЫЙ ОБУЧЕННЫЙ ЧАТ (База знаний)
         function sendMessage() {
-            let inputField = document.getElementById('user-input');
-            let message = inputField.value.trim().toLowerCase();
-            if(message === '') return;
+            const input = document.getElementById('user-input');
+            const msg = input.value.trim().toLowerCase();
+            if (!msg) return;
 
-            let chatBox = document.getElementById('chat-box');
-            
-            // Добавляем сообщение пользователя
-            chatBox.innerHTML += `<div class="message msg-user">${inputField.value}</div>`;
-            inputField.value = ''; // Очищаем поле
-            
-            // Прокручиваем чат вниз
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<div class="message msg-user">${input.value}</div>`;
+            input.value = '';
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Имитация задержки ответа бота
             setTimeout(() => {
-                let botReply = "Извини, в демо-версии я знаю не так много слов! Попробуй спросить про: привет, спасибо или уфа.";
-                
-                if(message.includes('привет')) botReply = 'По-башкирски это будет "Һаумыһығыҙ" (официально) или "Сәләм" (неформально).';
-                if(message.includes('спасибо')) botReply = 'Спасибо — это "Рәхмәт". Очень важное слово!';
-                if(message.includes('уфа')) botReply = 'Столица Башкортостана на башкирском пишется как "Өфө".';
+                let reply = "Интересный вопрос! Пока я только учусь, но ты можешь спросить меня точнее про: Сабантуй, Курай, Салават Юлаев, Чак-чак, Кымыз или Урал-батыр.";
 
-                chatBox.innerHTML += `<div class="message msg-bot">${botReply}</div>`;
+                if (msg.includes('сабантуй')) {
+                    reply = "🌾 **Сабантуй** — главный национальный праздник окончания весенних полевых работ. На нем традиционно устраивают конные скачки, борьбу куреш, бег в мешках и разбивание горшков с закрытыми глазами. Это символ единения и гостеприимства башкирского народа.";
+                } else if (msg.includes('курай')) {
+                    reply = "🎵 **Курай** — башкирский национальный духовой инструмент, продольная флейта. Делается из стебля одноименного тростника, растущего на Урале. Соцветие курая (7 лепестков) изображено на государственном флаге и гербе Башкортостана, символизируя 7 башкирских родов.";
+                } else if (msg.includes('салават юлаев') || msg.includes('салават')) {
+                    reply = "⚔️ **Салават Юлаев** — национальный герой башкирского народа, поэт-импровизатор (сэсэн) и один из предводителей Крестьянской войны 1773–1775 гг. Его имя носит главный хоккейный клуб Уфы, а памятник Салавату над рекой Белой — самая крупная конная статуя в России.";
+                } else if (msg.includes('чак-чак') || msg.includes('чак чак')) {
+                    reply = "🍯 **Чак-чак** — традиционное восточное и башкирское сладкое блюдо из теста с мёдом. Символизирует крепкую семью и дружелюбие. На башкирские свадьбы традиционно готовят огромные порции чак-чака, которыми угощают всех гостей.";
+                } else if (msg.includes('урал-батыр') || msg.includes('урал батыр')) {
+                    reply = "📜 **«Урал-батыр»** — важнейший памятник башкирской словесности, древний героический эпос. В нем рассказывается о борьбе башкирского батыра Урала за счастье людей, против сил зла. В конце эпоса Урал жертвует собой ради спасения природы, и из его тела рождаются Уральские горы.";
+                } else if (msg.includes('кымыз') || msg.includes('кумыс')) {
+                    reply = "🐴 **Кымыз (Кумыс)** — традиционный башкирский целебный напиток из кислого кобыльего молока. Башкирия издавна славилась своими кумысолечебницами. Про этот напиток восторженно писали Лев Толстой и Антон Чехов, приезжавшие сюда поправлять здоровье.";
+                } else if (msg.includes('привет') || msg.includes('хаумы')) {
+                    reply = "Һаумыһығыҙ! Рад пообщаться. Задавай любой вопрос про традиции Башкортостана!";
+                }
+
+                chatBox.innerHTML += `<div class="message msg-bot">${reply}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
-            }, 800); // Ответ через 0.8 секунд
+            }, 600);
         }
     </script>
 </body>
